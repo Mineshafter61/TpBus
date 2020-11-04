@@ -1,4 +1,4 @@
-#TpBus: A lightweight plugin to handle teleportation transportation systems.
+# TpBus: A lightweight plugin to handle teleportation transportation systems.
 
 Usage:
 1. Place a sign down and write down the following:
@@ -16,4 +16,4 @@ Usage:
 ```
 Players will be teleported from Bus stop no. 0, then Bus Stop no. 1, and so on.
 
-##TpBus is a plugin used on the Limaru City Server.
+## TpBus is a plugin used on the Limaru City Server.
