@@ -1,0 +1,6 @@
+name: TpBus
+version: ${project.version}
+main: mikeshafter.tpbus.TpBus
+api-version: 1.16
+description: A teleportation/warp bus plugin.
+author: mikeshafter
