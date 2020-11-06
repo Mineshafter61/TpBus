@@ -2,5 +2,10 @@ name: TpBus
 version: ${project.version}
 main: mikeshafter.tpbus.TpBus
 api-version: 1.16
-authors: [Mineshafter61]
-description: A neat /teleport bus plugin
+description: A teleportation/warp bus plugin.
+author: Mineshafter61
+
+commands:
+  delbusstop:
+    usage: /delstop <route> <stop>
+    description: Un-registers a bus stop.
