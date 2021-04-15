@@ -10,14 +10,16 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import java.io.File;
 
-public final class TpBus extends JavaPlugin implements Listener, CommandExecutor{
+public final class TpBus extends JavaPlugin implements Listener, CommandExecutor {
   @Override
   public void onEnable() {
     getConfig().options().copyDefaults(true); saveConfig();
@@ -30,6 +32,7 @@ public final class TpBus extends JavaPlugin implements Listener, CommandExecutor
     getServer().getConsoleSender().sendMessage(ChatColor.AQUA+"TpBus Plugin has been disabled!");
   }
   
+  //FileConfiguration config = this.getConfig();
 
   @EventHandler
   public void onSignClick(PlayerInteractEvent event) {
@@ -43,10 +46,10 @@ public final class TpBus extends JavaPlugin implements Listener, CommandExecutor
         if (sign.getLine(0).equalsIgnoreCase("[BusStop]")){
           String route = sign.getLine(1);
           int stop = Integer.parseInt(sign.getLine(2));
-          FileConfiguration config = this.getConfig();
+          FileConfiguration stops = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "stops.yml"));
           Location location = block.getLocation();
-          config.set(route+"."+stop, location); saveConfig();
-          location = (Location) config.get(route+"."+(stop+1));
+          if (player.hasPermission("tpbus.editbusstop")) {stops.set(route+"."+stop, location); saveConfig(); }
+          location = (Location) stops.get(route+"."+(stop+1));
           if (location != null){
             location.setX(location.getX()+0.5);
             location.setZ(location.getZ()+0.5);
@@ -54,7 +57,9 @@ public final class TpBus extends JavaPlugin implements Listener, CommandExecutor
             player.teleport(location);
             location.setX(location.getX()-0.5);
             location.setZ(location.getZ()-0.5); }
-          else {player.sendMessage(ChatColor.YELLOW+"Registered Bus Stop "+stop+" on route "+route+".");
+          else {
+            if (player.hasPermission("tpbus.editbusstop")) player.sendMessage(ChatColor.YELLOW+"Registered Bus Stop "+stop+" on route "+route+".");
+            else player.sendMessage(ChatColor.RED+"You do not have the permission to register a bus stop!");
           }
         }
       }
@@ -63,17 +68,18 @@ public final class TpBus extends JavaPlugin implements Listener, CommandExecutor
   
   @Override
   public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
-    try {
-      String route = args[0];
-      int stop = Integer.parseInt(args[1]);
-      FileConfiguration config = this.getConfig();
-      config.set(route+"."+stop, null);
-      saveConfig();
-      sender.sendMessage(ChatColor.YELLOW+"Bus Stop "+stop+" on route "+route+" has been unregistered.");
-      return true;
-    } catch (Exception e) {
-      sender.sendMessage("Error: usage: /delbusstop <route> <stop>");
+    if (sender.hasPermission("tpbus.editbusstop")){
+      try{
+        String route = args[0];
+        int stop = Integer.parseInt(args[1]);
+        FileConfiguration stops = YamlConfiguration.loadConfiguration(new File(getDataFolder(), "stops.yml"));
+        stops.set(route+"."+stop, null);
+        saveConfig();
+        sender.sendMessage(ChatColor.YELLOW+"Bus Stop "+stop+" on route "+route+" has been unregistered.");
+        return true;
+      } catch (Exception e) {sender.sendMessage("Error: usage: /delbusstop <route> <stop>");}
     }
+    else sender.sendMessage(ChatColor.RED+"You do not have the permission to delete a bus stop!");
     return false;
   }
 }

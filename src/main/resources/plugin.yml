@@ -9,3 +9,7 @@ commands:
   delbusstop:
     usage: /delstop <route> <stop>
     description: Un-registers a bus stop.
+permissions:
+  tpbus.editbusstop:
+    description: Allows you to register/deregister a bus stop
+    default: op

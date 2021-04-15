@@ -1,0 +1,5 @@
+# How much money should we charge for 0 distance in distance fares?
+distance_fares_surcharge: 1.00
+
+# How many ticks should we wait before starting a new journey?
+ticks_to_new_journey: 6000
